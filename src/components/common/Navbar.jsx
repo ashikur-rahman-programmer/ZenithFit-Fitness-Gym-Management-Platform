@@ -15,9 +15,6 @@ const ZenithNavbar = () => {
   const user = session?.user;
   const pathName = usePathname();
 
-  // Navbar-এর ভেতরেই চেক করুন:
-  console.log("Current User Session:", session);
-
   if (pathName.includes("/dashboard")) return null;
 
   const NAV_LINKS = [

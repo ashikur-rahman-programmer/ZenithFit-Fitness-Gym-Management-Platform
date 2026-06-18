@@ -10,9 +10,13 @@ import {
 } from "react-icons/fa6";
 import { Mail, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const pathName = usePathname();
+
+  if (pathName.includes("/dashboard")) return null;
 
   return (
     <footer className="bg-[#111111] border-t border-white/10 text-white py-12 px-4">
