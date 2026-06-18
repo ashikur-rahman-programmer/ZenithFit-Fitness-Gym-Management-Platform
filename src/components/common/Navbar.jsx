@@ -15,6 +15,9 @@ const ZenithNavbar = () => {
   const user = session?.user;
   const pathName = usePathname();
 
+  // Navbar-এর ভেতরেই চেক করুন:
+  console.log("Current User Session:", session);
+
   if (pathName.includes("/dashboard")) return null;
 
   const NAV_LINKS = [
@@ -97,13 +100,16 @@ const ZenithNavbar = () => {
                 <span className="text-sm">Dashboard</span>
               </Link>
 
-              {/* ইউজার ফটো ড্রপডাউন বা ডিরেক্ট ভিউ */}
-              <Avatar
-                src={user?.image || ""} // Better Auth-এ অবজেক্ট প্রোপার্টি 'image' থাকে
-                size="sm"
-                name={user?.name}
-                className="ring-2 ring-red-600 cursor-pointer text-xs"
-              />
+              {/* Custom Image Component */}
+              <div className="w-9 h-9 rounded-full ring-2 ring-red-600 overflow-hidden cursor-pointer relative">
+                <Image
+                  src={user?.image || "/default-avatar.png"} // ইমেজ না থাকলে একটি ডিফল্ট ইমেজ পাথ দিন
+                  alt={user?.name || "User"}
+                  fill
+                  sizes="36px"
+                  className="object-cover"
+                />
+              </div>
 
               {/* লগআউট বাটন */}
               <button
@@ -170,12 +176,15 @@ const ZenithNavbar = () => {
                 <div className="flex flex-col gap-4 pt-4 border-t border-white/10">
                   {/* মোবাইল মেন্যুতে ইউজারের ইনফো এবং ড্যাশবোর্ড লিংক */}
                   <div className="flex items-center gap-3">
-                    <Avatar
-                      src={user?.image || ""}
-                      size="sm"
-                      name={user?.name}
-                      className="ring-2 ring-red-600 text-xs"
-                    />
+                    <div className="w-9 h-9 rounded-full ring-2 ring-red-600 overflow-hidden relative">
+                      <Image
+                        src={user?.image || "/default-avatar.png"}
+                        alt={user?.name || "User"}
+                        fill
+                        sizes="36px"
+                        className="object-cover"
+                      />
+                    </div>
                     <div>
                       <p className="text-sm font-semibold text-white">
                         {user?.name}
