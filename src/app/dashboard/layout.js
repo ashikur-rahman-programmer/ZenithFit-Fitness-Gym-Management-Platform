@@ -10,6 +10,7 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-[#0a0a0a] text-white">
+      {/* Sidebar - এটি মোবাইল এবং ডেস্কটপ দুই ক্ষেত্রেই রেসপন্সিভ */}
       <SideBarDashboard />
 
       <div className="flex-1 flex flex-col w-full overflow-x-hidden">
@@ -26,6 +27,7 @@ const DashboardLayout = ({ children }) => {
                   src={user.image}
                   alt={user.name || "User"}
                   fill
+                  sizes="36px"
                   className="object-cover"
                 />
               ) : (
@@ -35,8 +37,13 @@ const DashboardLayout = ({ children }) => {
           </div>
         </header>
 
-        {/* Content */}
-        <main className="flex-1 p-4 md:p-8 w-full">{children}</main>
+        {/* Content Container: 
+            ডেস্কটপে একটি নির্দিষ্ট ম্যাক্সিমাম উইডথ (1600px) সেট করা হয়েছে, 
+            যাতে কন্টেন্ট অগোছালো না দেখায়। মোবাইলে এটি ফুল স্ক্রিন থাকবে।
+        */}
+        <main className="flex-1 p-4 md:p-8 w-full">
+          <div className="max-w-[1600px] mx-auto w-full">{children}</div>
+        </main>
       </div>
     </div>
   );
