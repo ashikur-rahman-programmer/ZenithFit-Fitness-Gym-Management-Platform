@@ -27,7 +27,7 @@ const ZenithNavbar = () => {
   const getDashboardPath = (role) => {
     if (role === "admin") return "/dashboard/admin";
     if (role === "trainer") return "/dashboard/trainer";
-    return "/dashboard/user"; // ডিফল্ট রোল ইউজার
+    return "/dashboard/user";
   };
 
   return (
