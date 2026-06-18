@@ -2,6 +2,7 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import ZenithNavbar from "@/components/common/Navbar";
+import Footer from "@/components/common/Footer";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -25,7 +26,9 @@ export default function RootLayout({ children }) {
         <header>
           <ZenithNavbar />
         </header>
-        {children} <ToastContainer />
+        {children}
+        <ToastContainer />
+        <Footer />
       </body>
     </html>
   );
