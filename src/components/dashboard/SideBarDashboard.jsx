@@ -47,7 +47,16 @@ const SideBarDashboard = () => {
         label: "Manage Classes",
         path: "/dashboard/admin/classes",
       },
-      { icon: FileText, label: "Forum Posts", path: "/dashboard/admin/forum" },
+      {
+        icon: PlusCircle,
+        label: "Add Forum",
+        path: "/dashboard/admin/add-forum",
+      },
+      {
+        icon: FileText,
+        label: "Manage Forum",
+        path: "/dashboard/admin/forum",
+      },
       {
         icon: DollarSign,
         label: "Transactions",
