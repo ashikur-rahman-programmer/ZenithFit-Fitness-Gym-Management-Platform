@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import {
   BookPlus,
-  ImageIcon,
   Tag,
   BarChart3,
   Clock,
@@ -13,50 +12,32 @@ import {
   FileText,
   Upload,
 } from "lucide-react";
+import { imageUpload } from "@/components/ImageUpload";
+import { addClasses } from "@/lib/action/addClasses";
 
 export default function AddClass() {
-  const [formData, setFormData] = useState({
-    name: "",
-    image: "",
-    category: "Yoga",
-    difficulty: "Beginner",
-    duration: "",
-    schedule: "",
-    price: "",
-    description: "",
-    status: "Pending", // রিকোয়ারমেন্ট অনুযায়ী ডিফল্ট স্ট্যাটাস
-  });
-
   const [uploading, setUploading] = useState(false);
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploading(true);
-    const formDataImg = new FormData();
-    formDataImg.append("image", file);
-
-    try {
-      const response = await fetch(
-        `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGEBB_API_KEY}`,
-        { method: "POST", body: formDataImg },
-      );
-      const data = await response.json();
-      if (data.success) {
-        setFormData({ ...formData, image: data.data.url });
-      }
-    } catch (error) {
-      console.error("Upload failed", error);
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting Data:", formData);
-    // এখানে আপনার API Call হবে (e.g., axios.post('/api/classes', formData))
+    setUploading(true);
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    // ইমেজ আপলোড
+    const imageFile = formData.get("image");
+    const image = await imageUpload(imageFile);
+
+    const allData = {
+      ...data,
+      image: image.url,
+      status: "Pending", // রিকোয়ারমেন্ট অনুযায়ী ডিফল্ট স্ট্যাটাস
+    };
+
+    const result = await addClasses(allData);
+    console.log(result);
+    setUploading(false);
   };
 
   const inputClass =
@@ -79,7 +60,7 @@ export default function AddClass() {
         onSubmit={handleSubmit}
         className="p-8 rounded-3xl bg-[#111111] border border-white/10 grid grid-cols-1 md:grid-cols-2 gap-6"
       >
-        {/* Name */}
+        {/* Name: name="name" যোগ করা হয়েছে */}
         <div className="md:col-span-2">
           <label className="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">
             Class Name
@@ -87,18 +68,16 @@ export default function AddClass() {
           <div className="relative">
             <BookPlus className={iconClass} size={18} />
             <input
+              name="name"
               required
               type="text"
               className={inputClass}
               placeholder="e.g. Power Yoga"
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
             />
           </div>
         </div>
 
-        {/* Image */}
+        {/* Image: name="image" যোগ করা হয়েছে */}
         <div className="md:col-span-2">
           <label className="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">
             Upload Image
@@ -106,56 +85,45 @@ export default function AddClass() {
           <div className="relative">
             <Upload className={iconClass} size={18} />
             <input
+              name="image"
+              required
               type="file"
-              onChange={handleImageUpload}
               className={`${inputClass} file:bg-red-600 file:border-none file:text-white file:rounded-lg file:py-1 file:px-2`}
             />
           </div>
-          {uploading && (
-            <p className="text-red-500 text-xs mt-2">Uploading...</p>
-          )}
         </div>
 
-        {/* Category & Difficulty */}
+        {/* Category: name="category" যোগ করা হয়েছে */}
         <div>
           <label className="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">
             Category
           </label>
           <div className="relative">
             <Tag className={iconClass} size={18} />
-            <select
-              className={selectClass}
-              onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
-              }
-            >
-              <option className="bg-[#111111]">Yoga</option>
-              <option className="bg-[#111111]">Weights</option>
-              <option className="bg-[#111111]">Cardio</option>
+            <select name="category" className={selectClass}>
+              <option value="Yoga">Yoga</option>
+              <option value="Weights">Weights</option>
+              <option value="Cardio">Cardio</option>
             </select>
           </div>
         </div>
 
+        {/* Difficulty: name="difficulty" যোগ করা হয়েছে */}
         <div>
           <label className="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">
             Difficulty
           </label>
           <div className="relative">
             <BarChart3 className={iconClass} size={18} />
-            <select
-              className={selectClass}
-              onChange={(e) =>
-                setFormData({ ...formData, difficulty: e.target.value })
-              }
-            >
-              <option className="bg-[#111111]">Beginner</option>
-              <option className="bg-[#111111]">Intermediate</option>
-              <option className="bg-[#111111]">Advanced</option>
+            <select name="difficulty" className={selectClass}>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
             </select>
           </div>
         </div>
 
-        {/* Duration & Price */}
+        {/* Duration: name="duration" যোগ করা হয়েছে */}
         <div>
           <label className="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">
             Duration (mins)
@@ -163,16 +131,16 @@ export default function AddClass() {
           <div className="relative">
             <Clock className={iconClass} size={18} />
             <input
+              name="duration"
               required
               type="number"
               className={inputClass}
               placeholder="60"
-              onChange={(e) =>
-                setFormData({ ...formData, duration: e.target.value })
-              }
             />
           </div>
         </div>
+
+        {/* Price: name="price" যোগ করা হয়েছে */}
         <div>
           <label className="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">
             Price ($)
@@ -180,18 +148,16 @@ export default function AddClass() {
           <div className="relative">
             <DollarSign className={iconClass} size={18} />
             <input
+              name="price"
               required
               type="number"
               className={inputClass}
               placeholder="20"
-              onChange={(e) =>
-                setFormData({ ...formData, price: e.target.value })
-              }
             />
           </div>
         </div>
 
-        {/* Schedule */}
+        {/* Schedule: name="schedule" যোগ করা হয়েছে */}
         <div className="md:col-span-2">
           <label className="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">
             Schedule
@@ -199,18 +165,16 @@ export default function AddClass() {
           <div className="relative">
             <CalendarDays className={iconClass} size={18} />
             <input
+              name="schedule"
               required
               type="text"
               className={inputClass}
               placeholder="e.g. Mon, Wed - 10:00 AM"
-              onChange={(e) =>
-                setFormData({ ...formData, schedule: e.target.value })
-              }
             />
           </div>
         </div>
 
-        {/* Description */}
+        {/* Description: name="description" যোগ করা হয়েছে */}
         <div className="md:col-span-2">
           <label className="block text-xs font-semibold text-white/50 uppercase tracking-wider mb-2">
             Description
@@ -218,22 +182,21 @@ export default function AddClass() {
           <div className="relative">
             <FileText className={iconClass} size={18} />
             <textarea
+              name="description"
               required
               rows="3"
               className={inputClass}
               placeholder="Description..."
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
             />
           </div>
         </div>
 
         <button
+          disabled={uploading}
           type="submit"
           className="md:col-span-2 bg-white text-black font-bold py-3.5 rounded-xl hover:bg-red-500 hover:text-white transition-all"
         >
-          Create Class
+          {uploading ? "Creating..." : "Create Class"}
         </button>
       </form>
     </motion.div>
