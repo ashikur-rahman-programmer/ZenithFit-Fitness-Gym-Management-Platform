@@ -2,8 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function ClassCard({ cls }) {
-  console.log(cls);
-
   return (
     <div className="bg-[#111111] p-6 rounded-3xl border border-white/10 hover:border-red-600/50 transition-all flex flex-col h-full">
       {/* Image Placeholder বা আসল ইমেজ */}
@@ -30,7 +28,7 @@ export default function ClassCard({ cls }) {
       </div>
 
       <Link
-        href={`/classes/${cls._id}`}
+        href={`/all-classes/${cls._id}`}
         className="block w-full py-3 text-center border border-white/10 hover:bg-red-600 hover:border-red-600 rounded-xl font-bold transition-all text-white mt-auto"
       >
         View Details
