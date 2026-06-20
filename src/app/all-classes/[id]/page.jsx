@@ -11,7 +11,7 @@ import {
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getClassDetailsWithStatus } from "@/lib/action/classDetailsActions";
-import ActionButtons from "@/components/ClassDetails";
+import ActionButtons from "@/components/BookNow";
 
 export default async function ClassDetailsPage({ params }) {
   const { id } = await params;

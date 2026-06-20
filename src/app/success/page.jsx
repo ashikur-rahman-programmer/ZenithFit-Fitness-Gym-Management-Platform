@@ -1,32 +1,85 @@
 import { redirect } from "next/navigation";
-
 import { stripe } from "../../lib/stripe";
+import { db, auth } from "@/lib/auth"; // auth ইমপোর্ট করা জরুরি
+import Link from "next/link";
+import { headers } from "next/headers";
 
 export default async function Success({ searchParams }) {
   const { session_id } = await searchParams;
 
-  if (!session_id)
-    throw new Error("Please provide a valid session_id (`cs_test_...`)");
+  if (!session_id) throw new Error("Please provide a valid session_id");
 
-  const {
-    status,
-    customer_details: { email: customerEmail },
-  } = await stripe.checkout.sessions.retrieve(session_id, {
-    expand: ["line_items", "payment_intent"],
+  // ১. ইউজার সেশন ও রোল চেক
+  const userSession = await auth.api.getSession({ headers: await headers() });
+  const role = userSession?.user?.role || "user"; // ডিফল্ট 'user' ধরা হলো
+
+  // ২. স্ট্রাইপ সেশন ভেরিফাই
+  const session = await stripe.checkout.sessions.retrieve(session_id, {
+    expand: ["payment_intent"],
   });
 
-  if (status === "open") {
-    return redirect("/");
-  }
+  if (session.status === "open") return redirect("/");
 
-  if (status === "complete") {
+  if (session.status === "complete") {
+    const { userId, classId, userEmail, className } = session.metadata;
+
+    // ৩. বুকিং সেভ করা
+    const existingBooking = await db.collection("booking").findOne({
+      classId: classId,
+      email: userEmail,
+    });
+
+    if (!existingBooking) {
+      await db.collection("booking").insertOne({
+        userId,
+        classId,
+        email: userEmail,
+        className,
+        paymentIntent: session.payment_intent.id,
+        amount: session.amount_total / 100,
+        status: "confirmed",
+        createdAt: new Date(),
+      });
+    }
+
+    // ৪. প্রিমিয়াম ডিজাইন ও রোল বেসড ড্যাশবোর্ড লিংক
     return (
-      <section id="success">
-        <p>
-          We appreciate your business! A confirmation email will be sent to{" "}
-          {customerEmail}. If you have any questions, please email{" "}
-          <a href="mailto:orders@example.com">orders@example.com</a>.
-        </p>
+      <section className="min-h-screen flex items-center justify-center bg-[#050505] text-white p-6">
+        <div className="max-w-md w-full bg-[#111111] p-10 rounded-[2rem] border border-white/10 shadow-2xl text-center space-y-6">
+          <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto">
+            <svg
+              className="w-10 h-10 text-green-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 13l4 4L19 7"
+              ></path>
+            </svg>
+          </div>
+
+          <div className="space-y-2">
+            <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">
+              Payment Successful!
+            </h1>
+            <p className="text-white/60 text-sm">
+              Your booking for{" "}
+              <span className="text-white font-semibold">{className}</span> is
+              confirmed.
+            </p>
+          </div>
+
+          <Link
+            href={`/dashboard/${role}`}
+            className="block w-full py-4 bg-white text-black rounded-2xl font-bold hover:bg-gray-200 transition-all transform hover:scale-[1.02]"
+          >
+            Go to {role === "admin" ? "Admin" : "My"} Dashboard
+          </Link>
+        </div>
       </section>
     );
   }
