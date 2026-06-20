@@ -18,3 +18,28 @@ export const deleteClass = async (id) => {
   const res = await fetch(`${baseUrl}/api/classes/${id}`, { method: "DELETE" });
   return res.json();
 };
+
+export const getApprovedClasses = async (params) => {
+  try {
+    const { search = "", category = "all", page = 1 } = params;
+
+    // URL এ স্পেস বা স্পেশাল ক্যারেক্টার হ্যান্ডেল করার জন্য এনকোড করা
+    const safeSearch = encodeURIComponent(search);
+    const safeCategory = encodeURIComponent(category);
+
+    const url = `${baseUrl}/api/classes?search=${safeSearch}&category=${safeCategory}&page=${page}&limit=9`;
+
+    const res = await fetch(url, { cache: "no-store" });
+
+    // রেসপন্স ঠিক না থাকলে এরর থ্রো করবে
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetching classes:", error);
+    // পেজ যাতে ক্র্যাশ না করে তাই ডিফল্ট এম্পটি ডাটা রিটার্ন করা হচ্ছে
+    return { classes: [], totalPages: 1 };
+  }
+};
