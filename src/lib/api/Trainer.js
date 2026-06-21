@@ -24,3 +24,21 @@ export async function getMyClasses(email) {
     return { classes: [], pending: 0, approved: 0 };
   }
 }
+
+export async function getTrainerStats(email) {
+  try {
+    const data = await getMyClasses(email);
+
+    // মোট ক্লাস = সব ক্লাসের সংখ্যা
+    const totalClasses = data.classes ? data.classes.length : 0;
+
+    // মোট এনরোলড স্টুডেন্ট = প্রতিটি ক্লাসের attendees অ্যারের সাইজ যোগফল
+    const totalEnrolled = data.classes
+      ? data.classes.reduce((acc, cls) => acc + (cls.attendees?.length || 0), 0)
+      : 0;
+
+    return { totalClasses, totalEnrolled };
+  } catch (error) {
+    return { totalClasses: 0, totalEnrolled: 0 };
+  }
+}
