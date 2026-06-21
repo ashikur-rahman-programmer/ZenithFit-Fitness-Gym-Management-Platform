@@ -32,7 +32,7 @@ export default function AddClass() {
     const allData = {
       ...data,
       image: image.url,
-      status: "Pending", // রিকোয়ারমেন্ট অনুযায়ী ডিফল্ট স্ট্যাটাস
+      status: "Pending",
     };
 
     const result = await addClasses(allData);
