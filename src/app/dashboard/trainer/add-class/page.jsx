@@ -12,7 +12,7 @@ import {
   FileText,
   Upload,
 } from "lucide-react";
-import { imageUpload } from "@/components/ImageUpload";
+import { imageUpload } from "@/lib/ImageUpload";
 import { addClasses } from "@/lib/action/addClasses";
 
 export default function AddClass() {
