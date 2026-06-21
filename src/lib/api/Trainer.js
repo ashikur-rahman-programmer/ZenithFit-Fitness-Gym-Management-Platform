@@ -8,5 +8,6 @@ export async function getTrainers(formData) {
     body: JSON.stringify(formData),
   });
 
+  if (!res.ok) throw new Error("Failed to submit");
   return await res.json();
 }

@@ -12,6 +12,18 @@ export default function ApplyAsTrainer({ user }) {
     e.preventDefault();
     setIsSubmitting(true);
 
+    // চেক করুন আগে অ্যাপ্লিকেশন আছে কি না
+    const checkRes = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/check-trainer-status/${user.email}`,
+    );
+    const statusData = await checkRes.json();
+
+    if (statusData.status === "Pending") {
+      alert("You already have a pending application!");
+      setIsSubmitting(false);
+      return;
+    }
+
     const formData = {
       email: user.email,
       name: user.name,
@@ -21,7 +33,6 @@ export default function ApplyAsTrainer({ user }) {
     };
 
     await getTrainers(formData);
-
     setIsSubmitting(false);
     setSubmitted(true);
   };
