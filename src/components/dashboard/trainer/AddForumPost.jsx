@@ -41,7 +41,7 @@ export default function AddForumPost({ user }) {
 
       await addForumPost(postData);
 
-      toast.success("Forum post submitted for review!");
+      toast.success("Forum post submitted successfully!");
       e.target.reset();
     } catch (err) {
       toast.error("Failed to publish post. Please try again.");
