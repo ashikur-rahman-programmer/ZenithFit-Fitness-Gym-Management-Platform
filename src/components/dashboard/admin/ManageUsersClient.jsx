@@ -64,7 +64,7 @@ export default function ManageUsersClient({ initialUsers }) {
                   <td className="px-6 py-5 text-white/70">{user.email}</td>
                   <td className="px-6 py-5">
                     <span
-                      className={`px-2 py-1 rounded-md text-xs font-bold ${user.role === "Admin" ? "bg-purple-500/10 text-purple-400" : "bg-white/5 text-white"}`}
+                      className={`px-2 py-1 rounded-md text-xs font-bold ${user.role === "admin" ? "bg-purple-500/10 text-purple-400" : "bg-white/5 text-white"}`}
                     >
                       {user.role}
                     </span>
@@ -77,7 +77,7 @@ export default function ManageUsersClient({ initialUsers }) {
                     </span>
                   </td>
                   <td className="px-6 py-5 text-right flex justify-end gap-2">
-                    {user.role !== "Admin" ? (
+                    {user.role !== "admin" ? (
                       <button
                         disabled={loading === user.email}
                         onClick={() =>
@@ -107,7 +107,7 @@ export default function ManageUsersClient({ initialUsers }) {
                     )}
 
                     <button
-                      disabled={loading === user.email || user.role === "Admin"}
+                      disabled={loading === user.email || user.role === "admin"}
                       onClick={() =>
                         handleUpdate(
                           user.email,
@@ -120,7 +120,7 @@ export default function ManageUsersClient({ initialUsers }) {
                             : "User Blocked!",
                         )
                       }
-                      className={`flex items-center gap-1 px-2 py-2 rounded-xl text-[10px] md:text-xs font-bold transition-all ${user.role === "Admin" ? "opacity-30 cursor-not-allowed bg-gray-800" : user.status === "Blocked" ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"}`}
+                      className={`flex items-center gap-1 px-2 py-2 rounded-xl text-[10px] md:text-xs font-bold transition-all ${user.role === "admin" ? "opacity-30 cursor-not-allowed bg-gray-800" : user.status === "Blocked" ? "bg-green-500/10 text-green-400" : "bg-red-500/10 text-red-400"}`}
                     >
                       {loading === user.email ? (
                         <Loader2 className="animate-spin" size={14} />
@@ -153,7 +153,7 @@ export default function ManageUsersClient({ initialUsers }) {
                 onClick={() => {
                   handleUpdate(
                     selectedUser.email,
-                    { role: "User" },
+                    { role: "user" },
                     "Demoted to User!",
                   );
                   setIsModalOpen(false);

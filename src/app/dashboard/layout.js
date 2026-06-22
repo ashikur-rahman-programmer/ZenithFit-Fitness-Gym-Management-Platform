@@ -17,7 +17,7 @@ const DashboardLayout = ({ children }) => {
         {/* Desktop Navbar */}
         <header className="hidden lg:flex h-16 border-b border-white/10 items-center justify-between px-8 bg-[#111111]">
           <h2 className="text-lg font-semibold capitalize">
-            {user?.role || "User"} Dashboard
+            {user?.role || "user"} Dashboard
           </h2>
           <div className="flex items-center gap-3 text-sm">
             <span className="font-medium">{user?.name}</span>

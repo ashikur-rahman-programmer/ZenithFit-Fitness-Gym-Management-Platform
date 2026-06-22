@@ -4,6 +4,12 @@ export const fetchAllClasses = async () => {
   const res = await fetch(`${baseUrl}/api/classes`, { cache: "no-store" });
   return res.json();
 };
+export const fetchAdminAllClasses = async () => {
+  const res = await fetch(`${baseUrl}/api/admin/classes`, {
+    cache: "no-store",
+  });
+  return res.json();
+};
 
 export const updateClassStatus = async (id, status) => {
   const res = await fetch(`${baseUrl}/api/classes/status/${id}`, {

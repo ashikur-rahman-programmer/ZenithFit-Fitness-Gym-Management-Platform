@@ -12,5 +12,6 @@ async function getTrainers() {
 
 export default async function ManageTrainersPage() {
   const trainers = await getTrainers();
+
   return <ManageAllTrainers initialTrainers={trainers} />;
 }
