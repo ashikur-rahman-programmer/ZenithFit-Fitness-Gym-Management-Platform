@@ -42,3 +42,12 @@ export async function getTrainerStats(email) {
     return { totalClasses: 0, totalEnrolled: 0 };
   }
 }
+
+export const updateTrainerRole = async (email, role) => {
+  const res = await fetch(`${baseUrl}/api/users/role/${email}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ role }),
+  });
+  return await res.json();
+};
