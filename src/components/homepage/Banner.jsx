@@ -1,98 +1,63 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, Dumbbell, Users } from "lucide-react";
+import { motion } from "framer-motion";
 
-export default function Banner() {
+export default function HeroBanner() {
   return (
-    <div className="bg-[#0a0a0a] text-white">
-      {/* 1. Banner Section */}
-      <section className="relative h-[80vh] flex items-center justify-center text-center px-6">
-        <div className="absolute inset-0 bg-[url('/gym-bg.jpg')] bg-cover bg-center opacity-20" />
+    <section className="relative w-full h-[500px] lg:h-[850px] overflow-hidden bg-[#0a0a0a]">
+      {/* Background Image with Scale Animation */}
+      <motion.div
+        initial={{ scale: 1.1 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 10, ease: "linear" }}
+        className="absolute inset-0 bg-cover bg-center lg:bg-right"
+        style={{ backgroundImage: "url('/banner.png')" }}
+      />
+
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/20 to-transparent z-10" />
+
+      {/* Content */}
+      <div className="container mx-auto px-4 h-full relative z-20 flex items-center">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative z-10 space-y-6"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="max-w-xl lg:max-w-2xl space-y-6 pt-20 lg:pt-0"
         >
-          <h1 className="text-6xl md:text-8xl font-black uppercase italic">
-            Push Your <span className="text-red-600">Limits</span>
-          </h1>
-          <p className="text-white/60 max-w-xl mx-auto text-lg">
-            Transform your life with expert trainers, high-intensity classes,
-            and a community that never quits.
-          </p>
-          <Link
-            href="/classes"
-            className="inline-flex items-center gap-2 bg-red-600 px-8 py-4 rounded-full font-bold hover:bg-red-700 transition"
-          >
-            Explore Classes <ArrowRight size={20} />
-          </Link>
-        </motion.div>
-      </section>
-
-      {/* 2. Featured Classes Section */}
-      <section className="py-20 px-6 max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold mb-10">Featured Classes</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="bg-[#111111] p-6 rounded-3xl border border-white/10 hover:border-red-600 transition"
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white leading-tight">
+            Master Your <br />
+            <motion.span
+              initial={{ color: "#ffffff" }}
+              animate={{ color: "#dc2626" }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+              className="text-red-600"
             >
-              <div className="h-40 bg-white/5 rounded-2xl mb-4" />
-              <h3 className="text-xl font-bold">Power Yoga</h3>
-              <p className="text-white/50 text-sm">Trainer: John Doe</p>
-              <div className="mt-4 flex justify-between items-center text-sm font-bold text-red-500">
-                <span>$49/mo</span>
-                <span className="flex items-center gap-1">
-                  <Users size={14} /> 120 Bookings
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+              Fitness Journey
+            </motion.span>
+          </h1>
 
-      {/* 3. Latest Forum Posts Section */}
-      <section className="py-20 bg-[#0d0d0d] px-6">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold mb-10">Latest Forum Discussions</h2>
-          <div className="grid md:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="border-l-2 border-red-600 pl-4 space-y-2">
-                <h4 className="font-bold">How to maximize muscle recovery?</h4>
-                <p className="text-xs text-white/40">
-                  By Trainer X • 2 hours ago
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+          <p className="text-base md:text-lg text-white/70 leading-relaxed">
+            Experience the ultimate gym management platform. Empowering
+            trainers, optimizing classes, and transforming members—all in one
+            place.
+          </p>
 
-      {/* 4. Extra Static Section 1: Why Choose Us */}
-      <section className="py-20 px-6 max-w-7xl mx-auto text-center">
-        <h2 className="text-3xl font-bold mb-12">Why Choose Us?</h2>
-        <div className="grid md:grid-cols-3 gap-12">
-          <div className="space-y-4">
-            <Dumbbell className="mx-auto text-red-600" size={40} />
-            <h3 className="text-xl font-bold">Modern Equipment</h3>
-            <p className="text-white/50">
-              High-end fitness tools for your best performance.
-            </p>
-          </div>
-          {/* Repeat for other points */}
-        </div>
-      </section>
-
-      {/* 5. Extra Static Section 2: Newsletter/CTA */}
-      <section className="py-20 bg-red-600 text-center">
-        <h2 className="text-4xl font-bold mb-6">Ready to Start?</h2>
-        <button className="bg-black px-10 py-4 rounded-xl font-bold">
-          Join Membership Now
-        </button>
-      </section>
-    </div>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="pt-4"
+          >
+            <Link
+              href="/all-classes"
+              className="inline-block px-10 py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-600/20"
+            >
+              Explore Classes
+            </Link>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
   );
 }

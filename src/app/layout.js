@@ -19,14 +19,12 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${montserrat.className}  h-full antialiased`}
+      className={`${montserrat.className} antialiased`}
       suppressHydrationWarning
     >
-      <body className="bg-[#0a0a0a] text-white">
-        <header>
-          <ZenithNavbar />
-        </header>
-        {children}
+      <body className="bg-[#0a0a0a] text-white min-h-screen flex flex-col">
+        <ZenithNavbar />
+        <main className="flex-grow">{children}</main>
         <ToastContainer />
         <Footer />
       </body>

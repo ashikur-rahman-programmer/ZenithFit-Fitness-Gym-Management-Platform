@@ -29,7 +29,6 @@ export const getApprovedClasses = async (params) => {
   try {
     const { search = "", category = "all", page = 1 } = params;
 
-    // URL এ স্পেস বা স্পেশাল ক্যারেক্টার হ্যান্ডেল করার জন্য এনকোড করা
     const safeSearch = encodeURIComponent(search);
     const safeCategory = encodeURIComponent(category);
 
@@ -45,7 +44,7 @@ export const getApprovedClasses = async (params) => {
     return await res.json();
   } catch (error) {
     console.error("Error fetching classes:", error);
-    // পেজ যাতে ক্র্যাশ না করে তাই ডিফল্ট এম্পটি ডাটা রিটার্ন করা হচ্ছে
+
     return { classes: [], totalPages: 1 };
   }
 };

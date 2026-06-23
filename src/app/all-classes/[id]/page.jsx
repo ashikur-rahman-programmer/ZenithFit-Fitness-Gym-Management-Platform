@@ -28,10 +28,10 @@ export default async function ClassDetailsPage({ params }) {
   const { classData, statusData } = result;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white p-6 md:p-12">
-      <div className="max-w-5xl mx-auto bg-[#111111] border border-white/10 rounded-3xl overflow-hidden">
+    <div className="min-h-screen bg-[#0a0a0a] text-white p-4 md:p-6 lg:p-12">
+      <div className="max-w-6xl mx-auto bg-[#111111] border border-white/10 rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl">
         {/* Header Section */}
-        <div className="relative w-full h-64 md:h-96 bg-white/5">
+        <div className="relative w-full h-64 md:h-80 lg:h-96 bg-white/5">
           <Image
             src={classData.image || "https://via.placeholder.com/800x400"}
             alt={classData.name}
@@ -39,60 +39,61 @@ export default async function ClassDetailsPage({ params }) {
             className="object-cover"
             priority
           />
-          <div className="absolute top-4 right-4 flex gap-2">
-            <span className="bg-black/60 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 font-bold text-red-500">
+          <div className="absolute top-4 right-4 flex flex-wrap justify-end gap-2">
+            <span className="bg-black/60 backdrop-blur-md px-4 py-2 rounded-lg md:rounded-xl border border-white/10 font-bold text-red-500 text-sm">
               {classData.category}
             </span>
             {classData.status === "Approved" && (
-              <span className="bg-green-500/10 backdrop-blur-md px-4 py-2 rounded-xl border border-green-500/20 font-bold text-green-500 flex items-center gap-2">
+              <span className="bg-green-500/10 backdrop-blur-md px-4 py-2 rounded-lg md:rounded-xl border border-green-500/20 font-bold text-green-500 flex items-center gap-2 text-sm">
                 <CheckCircle2 size={16} /> Verified
               </span>
             )}
           </div>
         </div>
 
-        <div className="p-8 md:p-12 grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="p-6 md:p-8 lg:p-12 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
           {/* Main Content */}
-          <div className="md:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-8">
             <div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-4">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6">
                 {classData.name}
               </h1>
 
-              {/* Metadata Grid */}
-              <div className="grid grid-cols-2 gap-4 text-white/70">
-                <span className="flex items-center gap-2 bg-white/5 p-3 rounded-lg">
-                  <User size={18} /> {classData.trainerName || "Expert Trainer"}
-                </span>
-                <span className="flex items-center gap-2 bg-white/5 p-3 rounded-lg">
-                  <Activity size={18} /> Difficulty:{" "}
-                  <span className="text-white font-semibold">
-                    {classData.difficulty}
-                  </span>
-                </span>
-                <span className="flex items-center gap-2 bg-white/5 p-3 rounded-lg">
-                  <CalendarDays size={18} /> {classData.schedule}
-                </span>
-                <span className="flex items-center gap-2 bg-white/5 p-3 rounded-lg">
-                  <Clock size={18} /> {classData.duration} Mins
-                </span>
+              {/* Metadata Grid - মোবাইল ভিউতে ১ কলাম, ট্যাবলেটে ২ */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <MetadataItem
+                  icon={<User size={18} />}
+                  text={classData.trainerName || "Expert Trainer"}
+                />
+                <MetadataItem
+                  icon={<Activity size={18} />}
+                  text={`Difficulty: ${classData.difficulty}`}
+                />
+                <MetadataItem
+                  icon={<CalendarDays size={18} />}
+                  text={classData.schedule}
+                />
+                <MetadataItem
+                  icon={<Clock size={18} />}
+                  text={`${classData.duration} Mins`}
+                />
               </div>
             </div>
 
             <div className="pt-6 border-t border-white/10">
               <h3 className="text-xl font-bold mb-4">About this class</h3>
-              <p className="text-white/60 leading-relaxed text-lg">
+              <p className="text-white/60 leading-relaxed text-base md:text-lg">
                 {classData.description}
               </p>
             </div>
           </div>
 
-          {/* Pricing & Actions */}
-          <div className="bg-[#1a1a1a] p-8 rounded-2xl border border-white/5 h-fit space-y-6">
+          {/* Pricing & Actions - স্টিকি কার্ড */}
+          <div className="bg-[#1a1a1a] p-6 md:p-8 rounded-2xl border border-white/5 h-fit space-y-6">
             <div className="flex items-center justify-between border-b border-white/10 pb-6">
               <span className="text-white/50 font-medium">Class Price</span>
-              <span className="text-4xl font-bold flex items-center">
-                <DollarSign size={28} className="text-red-500" />
+              <span className="text-3xl md:text-4xl font-bold flex items-center">
+                <DollarSign size={24} className="text-red-500" />
                 {classData.price}
               </span>
             </div>
@@ -104,11 +105,20 @@ export default async function ClassDetailsPage({ params }) {
             />
 
             <p className="text-center text-white/30 text-xs">
-              Secure payment processed via our trusted platform.
+              Secure payment processed via our platform.
             </p>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+// ছোট কম্পোনেন্ট কোড কমানোর জন্য
+function MetadataItem({ icon, text }) {
+  return (
+    <span className="flex items-center gap-3 bg-white/5 p-3 rounded-lg text-sm md:text-base border border-white/5">
+      <span className="text-red-500">{icon}</span> {text}
+    </span>
   );
 }

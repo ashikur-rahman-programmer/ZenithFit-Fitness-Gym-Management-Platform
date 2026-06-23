@@ -9,7 +9,9 @@ import { toggleFavoriteAction } from "@/lib/action/classDetailsActions";
 export default function ActionButtons({ classData, userEmail, initialStatus }) {
   const router = useRouter();
 
+  // স্টেট ম্যানেজমেন্ট
   const [isFavorited, setIsFavorited] = useState(initialStatus.isFavorited);
+  const [isBooked, setIsBooked] = useState(initialStatus.isBooked);
   const [loading, setLoading] = useState(false);
   const [bookingLoading, setBookingLoading] = useState(false);
 
@@ -19,12 +21,8 @@ export default function ActionButtons({ classData, userEmail, initialStatus }) {
       return router.push("/login");
     }
 
-    if (initialStatus.isBooked) {
-      toast.error("You have already booked this class!");
-      return;
-    }
+    if (isBooked) return;
 
-    // পেমেন্ট ফ্লো শুরু
     setBookingLoading(true);
     try {
       const response = await fetch("/api/checkout", {
@@ -34,14 +32,14 @@ export default function ActionButtons({ classData, userEmail, initialStatus }) {
       });
 
       const { url, error } = await response.json();
-
       if (error) throw new Error(error);
 
-      // Stripe Checkout এ রিডাইরেক্ট
-      if (url) window.location.href = url;
+      if (url) {
+        setIsBooked(true); // UI তে বাটন সাথে সাথে আপডেট হবে
+        window.location.href = url;
+      }
     } catch (err) {
       toast.error(err.message || "Payment initiation failed");
-    } finally {
       setBookingLoading(false);
     }
   };
@@ -49,7 +47,7 @@ export default function ActionButtons({ classData, userEmail, initialStatus }) {
   const handleToggleFavorite = async () => {
     if (!userEmail) {
       toast.error("Please login to add favorites!");
-      return router.push("/login");
+      return router.push("/auth/login");
     }
 
     setLoading(true);
@@ -62,48 +60,41 @@ export default function ActionButtons({ classData, userEmail, initialStatus }) {
     if (result.error) {
       toast.error(result.error);
     } else {
-      setIsFavorited(result.status === "added");
-      toast(result.message, {
-        type: result.status === "added" ? "success" : "info",
-      });
+      setIsFavorited(!isFavorited); // টগল সিস্টেম
+      toast.success(result.message);
+      router.refresh(); // সার্ভার কম্পোনেন্ট রি-ফ্রেস করা
     }
     setLoading(false);
   };
 
   return (
     <div className="space-y-4">
-      {/* Book Now Button */}
       <button
         onClick={handleBookNow}
-        disabled={initialStatus.isBooked || bookingLoading}
+        disabled={isBooked || bookingLoading}
         className={`w-full py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${
-          initialStatus.isBooked
+          isBooked
             ? "bg-white/10 text-white/50 cursor-not-allowed border border-white/5"
             : "bg-red-600 hover:bg-red-700 text-white"
         }`}
       >
         {bookingLoading ? (
           <Loader2 size={18} className="animate-spin" />
+        ) : isBooked ? (
+          "Already Booked"
         ) : (
           <>
-            {initialStatus.isBooked ? (
-              "Already Booked"
-            ) : (
-              <>
-                <CreditCard size={18} /> Book Now
-              </>
-            )}
+            <CreditCard size={18} /> Book Now
           </>
         )}
       </button>
 
-      {/* Favorite Button */}
       <button
         onClick={handleToggleFavorite}
         disabled={loading}
         className={`w-full py-4 rounded-xl font-bold transition-all border flex items-center justify-center gap-2 ${
           isFavorited
-            ? "bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500/20"
+            ? "bg-red-500/10 text-red-500 border-red-500/20"
             : "bg-transparent text-white border-white/20 hover:bg-white/5"
         }`}
       >

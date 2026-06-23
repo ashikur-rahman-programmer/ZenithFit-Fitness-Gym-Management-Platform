@@ -1,7 +1,6 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { Avatar } from "@heroui/react";
 import { LogOut, Menu, X, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -23,56 +22,68 @@ const ZenithNavbar = () => {
     { name: "Community", href: "/community" },
   ];
 
-  // রোল অনুযায়ী ড্যাশবোর্ড পাথ রিটার্ন করার ফাংশন
   const getDashboardPath = (role) => {
     if (role === "admin") return "/dashboard/admin";
     if (role === "trainer") return "/dashboard/trainer";
     return "/dashboard/user";
   };
 
+  // এনিমেশন সেটিংস
+  const itemVariants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: "easeOut" },
+    },
+  };
+
   return (
-    <motion.header
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#111111]/90 backdrop-blur-md"
-    >
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#111111]/90 backdrop-blur-md">
       <nav
         className="container mx-auto px-4 h-16 flex items-center justify-between"
         aria-label="Global"
       >
         {/* Logo Section */}
-        <Link
-          href="/"
-          className="flex items-center gap-2"
-          aria-label="ZenithFit Home"
-        >
-          <Image
-            src="/logo.jpg"
-            alt="zenithfit logo"
-            width={150}
-            height={120}
-          />
-        </Link>
+        <motion.div initial="hidden" animate="visible" variants={itemVariants}>
+          <Link href="/" className="flex items-center gap-2">
+            <Image
+              src="/logo.jpg"
+              alt="zenithfit logo"
+              width={150}
+              height={120}
+            />
+          </Link>
+        </motion.div>
 
         {/* Desktop Links */}
         <ul className="hidden md:flex gap-8">
           {NAV_LINKS.map((link) => (
-            <li key={link.name}>
+            <motion.li
+              key={link.name}
+              initial="hidden"
+              animate="visible"
+              variants={itemVariants}
+            >
               <Link
                 href={link.href}
                 className={`font-medium transition-colors ${pathName === link.href ? "text-red-500" : "text-white/80 hover:text-red-500"}`}
               >
                 {link.name}
               </Link>
-            </li>
+            </motion.li>
           ))}
         </ul>
 
         {/* Desktop Auth Section */}
         <div className="hidden md:flex items-center gap-3">
           {!user ? (
-            <>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={itemVariants}
+              className="flex gap-3"
+            >
               <Link
                 href="/auth/login"
                 className="px-6 py-2 text-sm font-semibold text-white border border-white/20 hover:border-red-600 transition-all duration-300"
@@ -85,10 +96,14 @@ const ZenithNavbar = () => {
               >
                 Register
               </Link>
-            </>
+            </motion.div>
           ) : (
-            <div className="flex items-center gap-4">
-              {/* ড্যাশবোর্ড আইকন বা টেক্সট লিংক */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={itemVariants}
+              className="flex items-center gap-4"
+            >
               <Link
                 href={getDashboardPath(user?.role)}
                 className="text-white/80 hover:text-red-500 flex items-center gap-1.5 font-medium transition-colors"
@@ -97,18 +112,16 @@ const ZenithNavbar = () => {
                 <span className="text-sm">Dashboard</span>
               </Link>
 
-              {/* Custom Image Component */}
-              <div className="w-9 h-9 rounded-full ring-2 ring-red-600 overflow-hidden cursor-pointer relative">
+              <div className="w-9 h-9 rounded-full ring-2 ring-red-600 overflow-hidden relative">
                 <Image
                   src={user?.image || "/default-avatar.png"}
                   alt={user?.name || "User"}
                   fill
                   sizes="36px"
-                  className="object-cover w-full h-full" // w-full এবং h-full যোগ করা হয়েছে
+                  className="object-cover w-full h-full"
                 />
               </div>
 
-              {/* লগআউট বাটন */}
               <button
                 onClick={() => authClient.signOut()}
                 className="text-white/80 hover:text-red-600 transition-colors"
@@ -116,7 +129,7 @@ const ZenithNavbar = () => {
               >
                 <LogOut size={20} />
               </button>
-            </div>
+            </motion.div>
           )}
         </div>
 
@@ -124,7 +137,6 @@ const ZenithNavbar = () => {
         <button
           className="md:hidden text-white p-2"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label="Toggle Menu"
         >
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -151,7 +163,6 @@ const ZenithNavbar = () => {
                   </Link>
                 </li>
               ))}
-              {/* Mobile Auth */}
               {!user ? (
                 <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
                   <Link
@@ -171,7 +182,6 @@ const ZenithNavbar = () => {
                 </div>
               ) : (
                 <div className="flex flex-col gap-4 pt-4 border-t border-white/10">
-                  {/* মোবাইল মেন্যুতে ইউজারের ইনফো এবং ড্যাশবোর্ড লিংক */}
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-full ring-2 ring-red-600 overflow-hidden relative">
                       <Image
@@ -191,15 +201,13 @@ const ZenithNavbar = () => {
                       </p>
                     </div>
                   </div>
-
                   <Link
                     href={getDashboardPath(user?.role)}
-                    className="text-white flex items-center gap-2 font-medium hover:text-red-500 transition-colors"
+                    className="text-white flex items-center gap-2 font-medium hover:text-red-500"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <LayoutDashboard size={18} /> Dashboard
                   </Link>
-
                   <button
                     onClick={() => {
                       authClient.signOut();
@@ -215,7 +223,7 @@ const ZenithNavbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.header>
+    </header>
   );
 };
 
