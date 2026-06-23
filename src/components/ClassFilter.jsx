@@ -1,13 +1,12 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Search } from "lucide-react";
 import { Input } from "@heroui/react";
 
 export default function ClassFilter() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const pathname = usePathname(); // এটি যুক্ত করা হলো
+  const pathname = usePathname();
 
   const currentSearch = searchParams.get("search") || "";
   const currentCategory = searchParams.get("category") || "all";
@@ -21,10 +20,8 @@ export default function ClassFilter() {
       params.delete(key);
     }
 
-    // ফিল্টার চেঞ্জ করলে পেজ ১ এ চলে যাবে
     params.set("page", "1");
 
-    // pathname যুক্ত করে ঠিকভাবে URL পুশ করা হলো
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
@@ -34,7 +31,6 @@ export default function ClassFilter() {
         placeholder="Search by class name..."
         defaultValue={currentSearch}
         onChange={(e) => updateURL("search", e.target.value)}
-        startContent={<Search size={18} className="text-white/50" />}
         className="flex-1"
       />
       <select

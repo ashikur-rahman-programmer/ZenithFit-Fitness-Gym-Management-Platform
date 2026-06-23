@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
       className={`${montserrat.className}  h-full antialiased`}
       suppressHydrationWarning
     >
-      <body>
+      <body className="bg-[#0a0a0a] text-white">
         <header>
           <ZenithNavbar />
         </header>

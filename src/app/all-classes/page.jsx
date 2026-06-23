@@ -4,7 +4,6 @@ import Pagination from "@/components/Pagination";
 import { getApprovedClasses } from "@/lib/action/classActions";
 
 export default async function ClassesPage({ searchParams }) {
-  // Next.js এর নতুন নিয়মে searchParams কে await করে নিতে হয়
   const params = await searchParams;
 
   const data = await getApprovedClasses(params);

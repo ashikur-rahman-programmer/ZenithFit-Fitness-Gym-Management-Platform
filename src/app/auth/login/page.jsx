@@ -20,7 +20,6 @@ import { FcGoogle } from "react-icons/fc"; // Google Icon-এর জন্য
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const onSubmit = async (e) => {
@@ -91,7 +90,7 @@ export default function LoginPage() {
                 <FiMail className="text-red-500" /> Email
               </Label>
               <Input
-                placeholder="john@example.com"
+                placeholder="Enter your email"
                 variant="bordered"
                 size="lg"
               />
@@ -100,24 +99,16 @@ export default function LoginPage() {
             <TextField
               isRequired
               name="password"
-              type={showPassword ? "text" : "password"}
+              type="password"
               className="w-full"
             >
               <Label className="flex items-center gap-2 mb-2 text-xs uppercase text-white/50">
                 <FiLock className="text-red-500" /> Password
               </Label>
               <Input
-                placeholder="••••••••"
+                placeholder="Enter your password"
                 variant="bordered"
                 size="lg"
-                endContent={
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                }
               />
             </TextField>
 

@@ -20,7 +20,6 @@ import Link from "next/link"; // Link ইম্পোর্ট নিশ্চ�
 
 export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const router = useRouter();
 
@@ -59,7 +58,6 @@ export default function SignUpPage() {
         email,
         password,
         image: imageUrl,
-        // ডিফল্ট রোল "user" হিসেবে পাঠানো হচ্ছে
         role: "user",
         callbackURL: "/",
       },
@@ -109,7 +107,11 @@ export default function SignUpPage() {
               <Label className="flex items-center gap-2 mb-2 text-xs uppercase text-white/50">
                 <FiUser className="text-red-500" /> Full Name
               </Label>
-              <Input placeholder="John Doe" variant="bordered" size="lg" />
+              <Input
+                placeholder="Enter your name"
+                variant="bordered"
+                size="lg"
+              />
             </TextField>
 
             <TextField isRequired name="email" type="email" className="w-full">
@@ -117,7 +119,7 @@ export default function SignUpPage() {
                 <FiMail className="text-red-500" /> Email
               </Label>
               <Input
-                placeholder="john@example.com"
+                placeholder="Enter your email"
                 variant="bordered"
                 size="lg"
               />
@@ -138,24 +140,16 @@ export default function SignUpPage() {
             <TextField
               isRequired
               name="password"
-              type={showPassword ? "text" : "password"}
+              type="password"
               className="w-full"
             >
               <Label className="flex items-center gap-2 mb-2 text-xs uppercase text-white/50">
                 <FiLock className="text-red-500" /> Password
               </Label>
               <Input
-                placeholder="••••••••"
+                placeholder="Enter your password"
                 variant="bordered"
                 size="lg"
-                endContent={
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                }
               />
               <Description className="text-[10px] text-white/40 mt-2">
                 Min 8 characters, 1 uppercase & 1 number.

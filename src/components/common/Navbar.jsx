@@ -100,11 +100,11 @@ const ZenithNavbar = () => {
               {/* Custom Image Component */}
               <div className="w-9 h-9 rounded-full ring-2 ring-red-600 overflow-hidden cursor-pointer relative">
                 <Image
-                  src={user?.image || "/default-avatar.png"} // ইমেজ না থাকলে একটি ডিফল্ট ইমেজ পাথ দিন
+                  src={user?.image || "/default-avatar.png"}
                   alt={user?.name || "User"}
                   fill
                   sizes="36px"
-                  className="object-cover"
+                  className="object-cover w-full h-full" // w-full এবং h-full যোগ করা হয়েছে
                 />
               </div>
 

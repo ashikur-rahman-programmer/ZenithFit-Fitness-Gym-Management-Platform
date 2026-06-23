@@ -1,12 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
-import {
-  BookCheck,
-  Heart,
-  UserCircle,
-  Briefcase,
-  BadgeCheck,
-} from "lucide-react";
+import Image from "next/image";
+import { BookCheck, Heart, Briefcase, BadgeCheck } from "lucide-react";
 
 export default function ClientOverview({ user, stats }) {
   const { trainerApp, booked, favorites } = stats;
@@ -32,21 +27,22 @@ export default function ClientOverview({ user, stats }) {
       {/* Main Content: Profile & Status */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Profile Details */}
-        <div className="lg:col-span-2 p-8 rounded-3xl bg-[#111111] border border-white/5 relative overflow-hidden">
-          <div className="flex items-center gap-6 relative z-10">
-            <img
-              src={user?.image}
-              alt={user?.name}
-              className="w-20 h-20 rounded-2xl object-cover"
+        <div className="lg:col-span-2 p-8 rounded-3xl bg-[#111111] border border-white/5 flex items-center gap-6">
+          <div className="w-20 h-20 relative rounded-2xl overflow-hidden shrink-0">
+            <Image
+              src={user?.image || "/default-avatar.png"} // ইমেজ না থাকলে একটি ডিফল্ট ইমেজ দিন
+              alt={user?.name || "User"}
+              fill
+              className="object-cover"
             />
-            <div>
-              <h3 className="text-2xl font-bold text-white">{user?.name}</h3>
-              <p className="text-white/50">{user?.email}</p>
-              <div className="mt-3">
-                <span className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400 flex items-center gap-1 w-fit">
-                  <BadgeCheck size={14} /> User
-                </span>
-              </div>
+          </div>
+          <div>
+            <h3 className="text-2xl font-bold text-white">{user?.name}</h3>
+            <p className="text-white/50">{user?.email}</p>
+            <div className="mt-3">
+              <span className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs text-blue-400 flex items-center gap-1 w-fit">
+                <BadgeCheck size={14} /> {user?.role || "User"}
+              </span>
             </div>
           </div>
         </div>

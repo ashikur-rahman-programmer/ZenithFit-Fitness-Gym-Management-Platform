@@ -1,9 +1,9 @@
 import { Trash2, Eye } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { getFavorites } from "@/lib/api/Favorite";
 import DeleteFavoriteButton from "@/components/dashboard/user/DeleteFavoriteButton";
+import { headers } from "next/headers";
 
 export default async function FavoriteClasses() {
   const session = await auth.api.getSession({ headers: await headers() });
