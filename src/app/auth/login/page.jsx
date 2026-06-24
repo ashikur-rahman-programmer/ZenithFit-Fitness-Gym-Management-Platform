@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import { Eye, EyeOff } from "lucide-react";
 import { FiLock, FiMail } from "react-icons/fi";
 import {
   Button,
@@ -16,7 +15,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { FcGoogle } from "react-icons/fc"; // Google Icon-এর জন্য
+import { FcGoogle } from "react-icons/fc";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);

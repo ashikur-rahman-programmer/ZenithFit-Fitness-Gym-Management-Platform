@@ -1,155 +1,258 @@
 "use client";
-
 import { useState } from "react";
 import {
   ThumbsUp,
   ThumbsDown,
-  MessageSquare,
   Edit2,
   Trash2,
   Send,
   Check,
   X,
+  MessageSquare,
 } from "lucide-react";
 
-export default function PostInteractions({ postId }) {
-  const [reaction, setReaction] = useState(null);
-  const [likes, setLikes] = useState(12);
-  const [dislikes, setDislikes] = useState(2);
+const AVATAR_COLORS = [
+  "bg-red-600",
+  "bg-orange-500",
+  "bg-yellow-500",
+  "bg-green-600",
+  "bg-blue-600",
+  "bg-violet-600",
+  "bg-pink-600",
+];
 
-  // কমেন্ট স্টেট
-  const [comments, setComments] = useState([
-    { id: 1, user: "Ashik", text: "Great post!", isOwner: true },
-  ]);
+const getInitial = (email) => (email ? email.charAt(0).toUpperCase() : "?");
+const getAvatarColor = (email) =>
+  AVATAR_COLORS[email ? email.charCodeAt(0) % AVATAR_COLORS.length : 0];
+
+export default function PostInteractions({ postId, initialData, userEmail }) {
+  const [comments, setComments] = useState(initialData?.comments || []);
+  const [likes, setLikes] = useState(
+    Array.isArray(initialData?.likes) ? initialData.likes : [],
+  );
+  const [dislikes, setDislikes] = useState(
+    Array.isArray(initialData?.dislikes) ? initialData.dislikes : [],
+  );
   const [newComment, setNewComment] = useState("");
-  const [editingId, setEditingId] = useState(null); // এডিট মোড ট্র্যাক করার জন্য
+  const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState("");
+  const [reactionLoading, setReactionLoading] = useState(null);
 
-  // ১. লাইক/ডিসলাইক লজিক
-  const handleReaction = (type) => {
-    if (reaction === type) {
-      setReaction(null);
-      type === "like" ? setLikes((l) => l - 1) : setDislikes((d) => d - 1);
-    } else {
-      if (reaction === "like") setLikes((l) => l - 1);
-      if (reaction === "dislike") setDislikes((d) => d - 1);
-      setReaction(type);
-      type === "like" ? setLikes((l) => l + 1) : setDislikes((d) => d + 1);
+  const handleReaction = async (type) => {
+    if (!userEmail) return alert("Login to vote");
+    setReactionLoading(type);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/posts/${postId}/react`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type, userEmail }),
+        },
+      );
+      const data = await res.json();
+      setLikes(data.likes || []);
+      setDislikes(data.dislikes || []);
+    } finally {
+      setReactionLoading(null);
     }
   };
 
-  // ২. কমেন্ট পোস্ট করা
-  const addComment = () => {
-    if (!newComment.trim()) return;
-    // TODO: BACKEND - এখানে POST /api/comments রিকোয়েস্ট পাঠাবেন
-    setComments([
-      ...comments,
-      { id: Date.now(), user: "You", text: newComment, isOwner: true },
-    ]);
-    setNewComment("");
-  };
-
-  // ৩. ডিলিট করা
-  const deleteComment = (id) => {
-    // TODO: BACKEND - এখানে DELETE /api/comments/${id} রিকোয়েস্ট পাঠাবেন
-    setComments(comments.filter((c) => c.id !== id));
-  };
-
-  // ৪. এডিট সেভ করা
-  const saveEdit = (id) => {
-    // TODO: BACKEND - এখানে PUT/PATCH /api/comments/${id} রিকোয়েস্ট পাঠাবেন
-    setComments(
-      comments.map((c) => (c.id === id ? { ...c, text: editText } : c)),
+  const saveEdit = async (id) => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/comments/${id}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newText: editText }),
+      },
     );
-    setEditingId(null);
+    if (res.ok) {
+      setComments(
+        comments.map((c) => (c._id === id ? { ...c, text: editText } : c)),
+      );
+      setEditingId(null);
+    }
   };
+
+  const deleteComment = async (id) => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/comments/${id}`,
+      { method: "DELETE" },
+    );
+    if (res.ok) setComments(comments.filter((c) => c._id !== id));
+  };
+
+  const addComment = async () => {
+    if (!newComment.trim()) return;
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/posts/${postId}/comments`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: newComment, authorEmail: userEmail }),
+      },
+    );
+    if (res.ok) {
+      const data = await res.json();
+      setComments([...comments, data]);
+      setNewComment("");
+    }
+  };
+
+  const userLiked = likes.includes(userEmail);
+  const userDisliked = dislikes.includes(userEmail);
 
   return (
-    <div className="bg-[#111111] p-8 rounded-3xl border border-white/10 space-y-8">
-      {/* Interaction Buttons */}
-      <div className="flex items-center gap-6 border-b border-white/10 pb-6">
+    <div className="space-y-6 font-sans">
+      {/* ── Reactions ── */}
+      <div className="flex items-center gap-3">
         <button
           onClick={() => handleReaction("like")}
-          className={`flex items-center gap-2 ${reaction === "like" ? "text-red-500 font-bold" : "text-white/60"}`}
+          disabled={reactionLoading !== null}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full border text-sm transition-all duration-200
+            ${
+              userLiked
+                ? "border-red-500/50 bg-red-500/10 text-red-400 font-semibold"
+                : "border-white/8 bg-white/4 text-white/40 hover:text-white/70"
+            }`}
         >
-          <ThumbsUp size={20} /> Like ({likes})
+          <ThumbsUp size={14} strokeWidth={userLiked ? 2.5 : 1.8} />
+          {likes.length}
         </button>
+
         <button
           onClick={() => handleReaction("dislike")}
-          className={`flex items-center gap-2 ${reaction === "dislike" ? "text-blue-500 font-bold" : "text-white/60"}`}
+          disabled={reactionLoading !== null}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-full border text-sm transition-all duration-200
+            ${
+              userDisliked
+                ? "border-indigo-400/50 bg-indigo-500/10 text-indigo-400 font-semibold"
+                : "border-white/8 bg-white/4 text-white/40 hover:text-white/70"
+            }`}
         >
-          <ThumbsDown size={20} /> Dislike ({dislikes})
+          <ThumbsDown size={14} strokeWidth={userDisliked ? 2.5 : 1.8} />
+          {dislikes.length}
         </button>
+
+        <div className="ml-auto flex items-center gap-1.5 text-white/25 text-sm">
+          <MessageSquare size={13} strokeWidth={1.5} />
+          {comments.length} {comments.length === 1 ? "comment" : "comments"}
+        </div>
       </div>
 
-      {/* Comments List */}
-      <div>
-        <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <MessageSquare /> Comments
-        </h2>
-        <div className="space-y-4">
+      {/* ── Divider ── */}
+      <div className="h-px bg-white/[0.06]" />
+
+      {/* ── Comments ── */}
+      {comments.length > 0 ? (
+        <div className="space-y-3">
           {comments.map((c) => (
             <div
-              key={c.id}
-              className="bg-white/5 p-4 rounded-xl flex justify-between items-center"
+              key={c._id}
+              className="flex gap-3 items-start bg-white/[0.025] border border-white/[0.07] rounded-2xl px-4 py-3.5"
             >
-              {editingId === c.id ? (
-                <div className="flex-1 flex gap-2">
-                  <input
-                    value={editText}
-                    onChange={(e) => setEditText(e.target.value)}
-                    className="flex-1 bg-black p-2 rounded outline-none"
-                  />
-                  <button onClick={() => saveEdit(c.id)}>
-                    <Check className="text-green-500" size={20} />
-                  </button>
-                  <button onClick={() => setEditingId(null)}>
-                    <X className="text-red-500" size={20} />
-                  </button>
-                </div>
-              ) : (
-                <div className="flex-1">
-                  <p className="text-xs text-white/40">{c.user}</p>
-                  <p className="text-sm">{c.text}</p>
-                </div>
-              )}
+              {/* Avatar */}
+              <div
+                className={`${getAvatarColor(c.authorEmail)} w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 mt-0.5`}
+              >
+                {getInitial(c.authorEmail)}
+              </div>
 
-              {c.isOwner && editingId !== c.id && (
-                <div className="flex gap-3">
-                  <Edit2
-                    size={16}
-                    className="cursor-pointer hover:text-white"
-                    onClick={() => {
-                      setEditingId(c.id);
-                      setEditText(c.text);
-                    }}
-                  />
-                  <Trash2
-                    size={16}
-                    className="text-red-500 cursor-pointer hover:text-red-400"
-                    onClick={() => deleteComment(c.id)}
-                  />
-                </div>
-              )}
+              {/* Body */}
+              <div className="flex-1 min-w-0">
+                {editingId === c._id ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && saveEdit(c._id)}
+                      autoFocus
+                      className="flex-1 bg-black/40 border border-red-500/40 rounded-lg px-3 py-1.5 text-sm text-white outline-none focus:border-red-500"
+                    />
+                    <button
+                      onClick={() => saveEdit(c._id)}
+                      className="p-1.5 rounded-lg bg-green-500/10 border border-green-500/25 text-green-400 hover:bg-green-500/20 transition"
+                    >
+                      <Check size={13} />
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="p-1.5 rounded-lg bg-red-500/10 border border-red-500/25 text-red-400 hover:bg-red-500/20 transition"
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[11px] font-medium text-white/30 uppercase tracking-widest truncate">
+                        {c.authorEmail}
+                      </span>
+                      {c.authorEmail === userEmail && (
+                        <div className="flex gap-2 ml-3 shrink-0">
+                          <button
+                            onClick={() => {
+                              setEditingId(c._id);
+                              setEditText(c.text);
+                            }}
+                            className="text-white/25 hover:text-white/80 transition-colors"
+                          >
+                            <Edit2 size={12} />
+                          </button>
+                          <button
+                            onClick={() => deleteComment(c._id)}
+                            className="text-red-500/30 hover:text-red-500 transition-colors"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-sm text-white/70 leading-relaxed break-words">
+                      {c.text}
+                    </p>
+                  </>
+                )}
+              </div>
             </div>
           ))}
         </div>
+      ) : (
+        <p className="text-center text-white/20 text-sm py-6">
+          No comments yet. Be the first.
+        </p>
+      )}
 
-        {/* Add Comment Input */}
-        <div className="mt-6 flex gap-2">
-          <input
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            className="flex-1 bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-red-600"
-            placeholder="Post a comment..."
-          />
-          <button
-            onClick={addComment}
-            className="bg-red-600 px-6 rounded-xl hover:bg-red-700 transition"
+      {/* ── Input ── */}
+      <div className="flex items-center gap-3 bg-white/[0.03] border border-white/[0.08] rounded-2xl pl-4 pr-1.5 py-1.5 focus-within:border-red-500/40 transition-colors">
+        {userEmail && (
+          <div
+            className={`${getAvatarColor(userEmail)} w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white shrink-0`}
           >
-            <Send size={18} />
-          </button>
-        </div>
+            {getInitial(userEmail)}
+          </div>
+        )}
+        <input
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && addComment()}
+          placeholder={userEmail ? "Add a comment…" : "Login to comment"}
+          disabled={!userEmail}
+          className="flex-1 bg-transparent text-sm text-white/80 placeholder:text-white/25 outline-none py-2 caret-red-500"
+        />
+        <button
+          onClick={addComment}
+          disabled={!newComment.trim()}
+          className={`p-2.5 rounded-xl flex items-center justify-center transition-all duration-200 shrink-0
+            ${
+              newComment.trim()
+                ? "bg-red-600 hover:bg-red-700 text-white"
+                : "bg-white/[0.06] text-white/20 cursor-default"
+            }`}
+        >
+          <Send size={14} />
+        </button>
       </div>
     </div>
   );
