@@ -6,6 +6,8 @@ import { ArrowRight } from "lucide-react";
 export default async function FeaturedClasses() {
   const classes = await getFeaturedClasses();
 
+  if (classes.length === 0) return null;
+
   return (
     <section className="py-24 bg-[#0a0a0a]">
       <div className="container mx-auto px-4">
@@ -46,7 +48,7 @@ export default async function FeaturedClasses() {
                       {cls.name}
                     </h3>
                     <p className="text-white/50 text-sm font-medium">
-                      By {cls.trainerName}
+                      Difficulty : {cls.difficulty}
                     </p>
                   </div>
                 </div>

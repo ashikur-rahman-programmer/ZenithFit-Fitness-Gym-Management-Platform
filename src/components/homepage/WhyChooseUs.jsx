@@ -42,6 +42,11 @@ export default function WhyChooseUs() {
               Platform
             </span>
           </h2>
+          <p className="text-white/50 max-w-3xl mx-auto text-lg">
+            ZenithFit turns complex gym management into a seamless digital
+            experience. Robust, scalable, and built to grow your fitness
+            business efficiently.
+          </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">

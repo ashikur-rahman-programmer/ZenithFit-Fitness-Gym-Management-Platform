@@ -18,18 +18,23 @@ export default async function LatestForumPage() {
           </span>
         </div>
 
-        <h2 className="text-4xl font-extrabold text-white mb-12 text-center">
+        <h2 className="text-4xl font-extrabold text-white mb-4 text-center">
           Latest Community Insights
         </h2>
+        <p className="text-white/50 max-w-3xl mx-auto text-center text-lg mb-12">
+          Explore the heartbeat of fitness. Join the conversation, share your
+          progress, and get inspired by our global network of fitness
+          enthusiasts.
+        </p>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {posts.map((post) => (
             <div
               key={post._id}
-              className="group bg-[#111111] border border-white/5 rounded-3xl overflow-hidden hover:border-red-600/50 hover:-translate-y-2 duration-500  transition-all "
+              className="group bg-[#111111] border border-white/5 rounded-3xl overflow-hidden hover:border-red-600/50 hover:-translate-y-2 duration-500 transition-all flex flex-col min-h-[450px]"
             >
-              {/* Image Section */}
-              <div className="relative h-48 w-full overflow-hidden">
+              {/* Image Section: h-48 থেকে h-64 এ বাড়ানো হয়েছে */}
+              <div className="relative h-64 w-full overflow-hidden">
                 <Image
                   src={post.image || "/placeholder-forum.jpg"}
                   alt={post.title}
@@ -38,28 +43,31 @@ export default async function LatestForumPage() {
                 />
               </div>
 
-              <div className="p-6">
-                <h3 className="font-bold text-lg text-white mb-3 group-hover:text-red-500 transition-colors">
+              {/* Content Area: প্যাডিং এবং উচ্চতা বাড়ানো হয়েছে */}
+              <div className="p-8 flex flex-col flex-grow">
+                <h3 className="font-bold text-xl text-white mb-4 group-hover:text-red-500 transition-colors">
                   {post.title}
                 </h3>
-                <p className="text-sm text-white/40 mb-6 line-clamp-2">
+
+                <p className="text-sm text-white/40 mb-8 line-clamp-3 flex-grow leading-relaxed">
                   {post.description}
                 </p>
 
-                <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                  <div className="flex items-center gap-4 text-white/30 text-xs">
-                    <div className="flex items-center gap-1.5">
-                      <ThumbsUp size={14} /> {post.likes?.length || 0}
+                {/* Footer: বাটন সেকশন */}
+                <div className="flex items-center justify-between pt-6 border-t border-white/5 mt-auto">
+                  <div className="flex items-center gap-6 text-white/30 text-xs">
+                    <div className="flex items-center gap-2">
+                      <ThumbsUp size={16} /> {post.likes?.length || 0}
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <MessageSquare size={14} /> {post.comments?.length || 0}
+                    <div className="flex items-center gap-2">
+                      <MessageSquare size={16} /> {post.comments?.length || 0}
                     </div>
                   </div>
                   <Link
                     href={`/community/${post._id}`}
-                    className="text-red-500 font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all"
+                    className="text-red-500 font-bold text-sm flex items-center gap-2 group-hover:gap-3 transition-all"
                   >
-                    View <ArrowRight size={14} />
+                    View <ArrowRight size={16} />
                   </Link>
                 </div>
               </div>
