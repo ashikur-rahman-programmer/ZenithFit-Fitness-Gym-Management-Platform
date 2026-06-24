@@ -20,3 +20,14 @@ export async function getForumPosts() {
     return [];
   }
 }
+
+export async function getForumCommunityPosts(page = 1) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/all-forums?page=${page}&limit=6`,
+    {
+      cache: "no-store",
+    },
+  );
+  if (!res.ok) throw new Error("Failed to fetch");
+  return res.json();
+}

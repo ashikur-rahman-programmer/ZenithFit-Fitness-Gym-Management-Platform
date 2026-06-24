@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getFeaturedClasses } from "@/lib/api/FeaturedClasses";
+import { ArrowRight } from "lucide-react";
 
 export default async function FeaturedClasses() {
   const classes = await getFeaturedClasses();
@@ -84,6 +85,15 @@ export default async function FeaturedClasses() {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="flex justify-center mt-12">
+          <Link
+            href="/all-classes"
+            className="px-8 py-3 border border-white/10 text-white rounded-full hover:bg-white/5 transition-all flex items-center gap-2 hover:border-red-600"
+          >
+            See More Classes <ArrowRight size={16} />
+          </Link>
         </div>
       </div>
     </section>

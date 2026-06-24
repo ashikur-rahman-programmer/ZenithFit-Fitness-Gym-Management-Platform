@@ -12,8 +12,9 @@ import {
   ThumbsUp,
 } from "lucide-react";
 import Image from "next/image";
+import Pagination from "./Pagination";
 
-const ForumClientCommunication = ({ initialPosts }) => {
+const ForumClientCommunication = ({ initialPosts, totalPages }) => {
   const AVATAR_COLORS = [
     "bg-red-600",
     "bg-orange-500",
@@ -126,6 +127,9 @@ const ForumClientCommunication = ({ initialPosts }) => {
             </motion.div>
           ))}
         </div>
+
+        {/* Pagination */}
+        <Pagination totalPages={totalPages} />
       </div>
     </div>
   );

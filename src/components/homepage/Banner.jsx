@@ -45,7 +45,7 @@ export default function HeroBanner() {
           </p>
 
           <motion.div
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.95 }}
             className="pt-4"
           >
