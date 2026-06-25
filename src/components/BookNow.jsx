@@ -5,8 +5,14 @@ import { useRouter } from "next/navigation";
 import { Heart, Loader2, CreditCard } from "lucide-react";
 import { toast } from "react-toastify";
 import { toggleFavoriteAction } from "@/lib/action/classDetailsActions";
+import { authClient } from "@/lib/auth-client";
 
-export default function ActionButtons({ classData, userEmail, initialStatus }) {
+export default function ActionButtons({
+  classData,
+  userEmail,
+  userStatus,
+  initialStatus,
+}) {
   const router = useRouter();
 
   // স্টেট ম্যানেজমেন্ট
@@ -19,6 +25,11 @@ export default function ActionButtons({ classData, userEmail, initialStatus }) {
     if (!userEmail) {
       toast.error("Please login to book a class!");
       return router.push("/login");
+    }
+
+    if (userStatus === "Blocked") {
+      toast.error("Action restricted by Admin");
+      return;
     }
 
     if (isBooked) return;

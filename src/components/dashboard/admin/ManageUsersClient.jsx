@@ -83,7 +83,7 @@ export default function ManageUsersClient({ initialUsers }) {
                         onClick={() =>
                           handleUpdate(
                             user.email,
-                            { role: "Admin" },
+                            { role: "admin" },
                             "Promoted to Admin!",
                           )
                         }
@@ -166,7 +166,7 @@ export default function ManageUsersClient({ initialUsers }) {
                 onClick={() => {
                   handleUpdate(
                     selectedUser.email,
-                    { role: "Trainer" },
+                    { role: "trainer" },
                     "Demoted to Trainer!",
                   );
                   setIsModalOpen(false);

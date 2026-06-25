@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { Briefcase, Award, FileText, CheckCircle2 } from "lucide-react";
 import { getTrainers } from "@/lib/api/Trainer";
+import { toast } from "react-toastify";
 
 export default function ApplyAsTrainer({ user }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -12,11 +13,14 @@ export default function ApplyAsTrainer({ user }) {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // চেক করুন আগে অ্যাপ্লিকেশন আছে কি না
     const checkRes = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/check-trainer-status/${user.email}`,
     );
     const statusData = await checkRes.json();
+    if (checkRes.status === 403) {
+      toast.error("Action restricted by Admin");
+      return;
+    }
 
     if (statusData.status === "Pending") {
       alert("You already have a pending application!");

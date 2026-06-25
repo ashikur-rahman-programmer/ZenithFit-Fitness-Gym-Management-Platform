@@ -8,5 +8,6 @@ export const metadata = {
 
 export default async function Page() {
   const users = await getAllUsers();
+
   return <ManageUsersClient initialUsers={users} />;
 }

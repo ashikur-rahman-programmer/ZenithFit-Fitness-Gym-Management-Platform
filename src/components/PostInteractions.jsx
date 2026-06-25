@@ -11,6 +11,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "react-toastify";
 
 const AVATAR_COLORS = [
   "bg-red-600",
@@ -136,6 +137,12 @@ export default function PostInteractions({ postId, initialData, userEmail }) {
         body: JSON.stringify({ text: newComment, authorEmail: userEmail }),
       },
     );
+
+    if (res.status === 403) {
+      toast.error("Action restricted by Admin");
+      return;
+    }
+
     if (res.ok) {
       const data = await res.json();
       setComments([...comments, data]);

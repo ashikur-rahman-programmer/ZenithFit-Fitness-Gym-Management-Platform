@@ -16,7 +16,7 @@ import {
 } from "@heroui/react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
-import Link from "next/link"; // Link ইম্পোর্ট নিশ্চিত করুন
+import Link from "next/link";
 
 export default function SignUpPage() {
   const [loading, setLoading] = useState(false);

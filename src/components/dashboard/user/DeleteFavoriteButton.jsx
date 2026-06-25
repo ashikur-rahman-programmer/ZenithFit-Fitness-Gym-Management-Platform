@@ -6,10 +6,10 @@ export default function DeleteFavoriteButton({ id }) {
   const router = useRouter();
 
   const handleDelete = async () => {
-    await fetch(`process.env.NEXT_PUBLIC_SERVER_URL/api/favorites/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/favorites/${id}`, {
       method: "DELETE",
     });
-    router.refresh(); // পেজটি রিফ্রেশ করে নতুন ডাটা লোড করবে
+    router.refresh();
   };
 
   return (

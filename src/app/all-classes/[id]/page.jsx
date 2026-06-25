@@ -21,6 +21,7 @@ export default async function ClassDetailsPage({ params }) {
   });
 
   const userEmail = session?.user?.email;
+  const userStatus = session?.user?.status;
 
   const result = await getClassDetailsWithStatus(id, userEmail);
   if (!result || !result.classData) return notFound();
@@ -102,6 +103,7 @@ export default async function ClassDetailsPage({ params }) {
               classData={classData}
               userEmail={userEmail}
               initialStatus={statusData}
+              userStatus={userStatus}
             />
 
             <p className="text-center text-white/30 text-xs">
