@@ -1,4 +1,8 @@
+import Unauthorized from "@/app/unauthorized/page";
 import AdminOverview from "@/components/dashboard/admin/AdminOverview";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 async function getStats() {
   const res = await fetch(
@@ -12,6 +16,13 @@ async function getStats() {
 
 export default async function AdminOverviewPage() {
   const stats = await getStats();
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session) return redirect("/auth/login");
+
+  if (session.user.role !== "admin") {
+    return <Unauthorized />;
+  }
 
   return <AdminOverview initialStats={stats} />;
 }

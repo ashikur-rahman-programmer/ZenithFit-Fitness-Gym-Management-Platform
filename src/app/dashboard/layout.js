@@ -3,10 +3,13 @@
 import SideBarDashboard from "@/components/dashboard/SideBarDashboard";
 import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
+import Loading from "../loading";
 
 const DashboardLayout = ({ children }) => {
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
   const user = session?.user;
+
+  if (isPending) return <Loading />;
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-[#0a0a0a] text-white">
@@ -37,10 +40,6 @@ const DashboardLayout = ({ children }) => {
           </div>
         </header>
 
-        {/* Content Container: 
-            ডেস্কটপে একটি নির্দিষ্ট ম্যাক্সিমাম উইডথ (1600px) সেট করা হয়েছে, 
-            যাতে কন্টেন্ট অগোছালো না দেখায়। মোবাইলে এটি ফুল স্ক্রিন থাকবে।
-        */}
         <main className="flex-1 p-4 md:p-8 w-full">
           <div className="max-w-[1600px] mx-auto w-full">{children}</div>
         </main>
