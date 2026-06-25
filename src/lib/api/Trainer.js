@@ -1,10 +1,21 @@
 "use server";
+
+import { headers } from "next/headers";
+import { auth } from "../auth";
+
 const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
 export async function getTrainers(formData) {
+  const { token } = await auth.api.getToken({ headers: await headers() });
+  if (!token) {
+    throw new Error("Unauthorized: No token found");
+  }
   const res = await fetch(`${baseUrl}/api/trainer-application`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify(formData),
   });
 
@@ -13,8 +24,11 @@ export async function getTrainers(formData) {
 }
 
 export async function getMyClasses(email) {
+  const { token } = await auth.api.getToken({ headers: await headers() });
+  if (!token) throw new Error("Unauthorized: No token found");
   try {
     const res = await fetch(`${baseUrl}/api/trainer/my-classes/${email}`, {
+      headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
     });
     if (!res.ok) return { classes: [], pending: 0, approved: 0 };
@@ -44,9 +58,14 @@ export async function getTrainerStats(email) {
 }
 
 export const updateTrainerRole = async (email, role) => {
+  const { token } = await auth.api.getToken({ headers: await headers() });
+  if (!token) throw new Error("Unauthorized: No token found");
   const res = await fetch(`${baseUrl}/api/users/role/${email}`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({ role }),
   });
   return await res.json();

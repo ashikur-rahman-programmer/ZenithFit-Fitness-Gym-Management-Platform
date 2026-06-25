@@ -4,6 +4,11 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getBookedClasses } from "@/lib/api/BookingData";
 
+export const metadata = {
+  title: "Booked Classes",
+  description: "Browse through our expert-led fitness sessions",
+};
+
 export default async function BookedClasses() {
   const session = await auth.api.getSession({ headers: await headers() });
   const email = session?.user?.email;

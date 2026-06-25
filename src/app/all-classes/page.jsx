@@ -3,6 +3,11 @@ import ClassFilter from "@/components/ClassFilter";
 import Pagination from "@/components/Pagination";
 import { getApprovedClasses } from "@/lib/action/classActions";
 
+export const metadata = {
+  title: "All Classes",
+  description: "Browse through our expert-led fitness sessions",
+};
+
 export default async function ClassesPage({ searchParams }) {
   const params = await searchParams;
 

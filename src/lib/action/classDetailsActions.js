@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { auth } from "../auth";
+import { headers } from "next/headers";
 
 const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
 
@@ -35,12 +37,21 @@ export const getClassDetailsWithStatus = async (classId, userEmail) => {
 
 // ২. ফেভারিট টগল করার অ্যাকশন (Form Action এর জন্য)
 export const toggleFavoriteAction = async (userEmail, classId, classData) => {
+  const { token } = await auth.api.getToken({ headers: await headers() });
+
+  if (!token) {
+    throw new Error("Unauthorized: No token found");
+  }
+
   if (!userEmail) return { error: "Please login first" };
 
   try {
     const res = await fetch(`${baseUrl}/api/favorites/toggle`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ email: userEmail, classId, classData }),
     });
 

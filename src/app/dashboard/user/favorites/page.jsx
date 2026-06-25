@@ -5,6 +5,11 @@ import { getFavorites } from "@/lib/api/Favorite";
 import DeleteFavoriteButton from "@/components/dashboard/user/DeleteFavoriteButton";
 import { headers } from "next/headers";
 
+export const metadata = {
+  title: "Favorite Classes",
+  description: "Browse through our expert-led fitness sessions",
+};
+
 export default async function FavoriteClasses() {
   const session = await auth.api.getSession({ headers: await headers() });
   const favorites = await getFavorites(session?.user?.email);

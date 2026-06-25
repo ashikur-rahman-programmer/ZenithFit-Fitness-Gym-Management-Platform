@@ -4,15 +4,20 @@ import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { headers } from "next/headers";
 
+export const metadata = {
+  title: "Success",
+  description: "Browse through our expert-led fitness sessions",
+};
+
 export default async function Success({ searchParams }) {
   const { session_id } = await searchParams;
   if (!session_id) throw new Error("Please provide a valid session_id");
 
-  // ১. ইউজার সেশন ও রোল চেক
+  //   user role
   const userSession = await auth.api.getSession({ headers: await headers() });
   const role = userSession?.user?.role || "user";
 
-  // ২. স্ট্রাইপ সেশন ভেরিফাই
+  // stripe verification
   const session = await stripe.checkout.sessions.retrieve(session_id, {
     expand: ["payment_intent"],
   });
@@ -22,11 +27,19 @@ export default async function Success({ searchParams }) {
   if (session.status === "complete") {
     const { userId, classId, userEmail, className } = session.metadata;
 
-    // ৩. ব্যাকএন্ডের POST API কল করা (বুকিং এবং কাউন্ট আপডেটের জন্য)
+    const { token } = await auth.api.getToken({ headers: await headers() });
+
+    if (!token) {
+      throw new Error("Unauthorized: No token found");
+    }
+
     try {
       await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/bookings`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           userId,
           classId,

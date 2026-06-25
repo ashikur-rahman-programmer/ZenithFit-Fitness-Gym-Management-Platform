@@ -33,7 +33,7 @@ const faqData = [
 ];
 
 export default function FAQ() {
-  const [activeIndex, setActiveIndex] = useState(0); // প্রথমটি ডিফল্ট খোলা থাকবে
+  const [activeIndex, setActiveIndex] = useState(null);
 
   return (
     <section className="py-24 ">

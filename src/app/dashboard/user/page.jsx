@@ -2,6 +2,11 @@ import ClientOverview from "@/components/dashboard/user/ClientOverview";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+export const metadata = {
+  title: "User Dashboard",
+  description: "Browse through our expert-led fitness sessions",
+};
+
 export default async function OverviewPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return <p>Unauthorized</p>;

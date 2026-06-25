@@ -10,6 +10,7 @@ import {
   X,
   MessageSquare,
 } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
 
 const AVATAR_COLORS = [
   "bg-red-600",
@@ -39,6 +40,14 @@ export default function PostInteractions({ postId, initialData, userEmail }) {
   const [reactionLoading, setReactionLoading] = useState(null);
 
   const handleReaction = async (type) => {
+    // jwt authentication
+    const { data: tokenData } = await authClient.token();
+    const token = tokenData?.token;
+
+    if (!token) {
+      throw new Error("Unauthorized: No token found");
+    }
+
     if (!userEmail) return alert("Login to vote");
     setReactionLoading(type);
     try {
@@ -46,7 +55,10 @@ export default function PostInteractions({ postId, initialData, userEmail }) {
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/posts/${postId}/react`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({ type, userEmail }),
         },
       );
@@ -59,11 +71,21 @@ export default function PostInteractions({ postId, initialData, userEmail }) {
   };
 
   const saveEdit = async (id) => {
+    // jwt authentication
+    const { data: tokenData } = await authClient.token();
+    const token = tokenData?.token;
+    if (!token) {
+      throw new Error("Unauthorized: No token found");
+    }
+
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/comments/${id}`,
       {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ newText: editText }),
       },
     );
@@ -76,20 +98,41 @@ export default function PostInteractions({ postId, initialData, userEmail }) {
   };
 
   const deleteComment = async (id) => {
+    // jwt authentication
+    const { data: tokenData } = await authClient.token();
+    const token = tokenData?.token;
+    if (!token) {
+      throw new Error("Unauthorized: No token found");
+    }
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/comments/${id}`,
-      { method: "DELETE" },
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     );
     if (res.ok) setComments(comments.filter((c) => c._id !== id));
   };
 
   const addComment = async () => {
+    // jwt authentication
+    const { data: tokenData } = await authClient.token();
+    const token = tokenData?.token;
+    if (!token) {
+      throw new Error("Unauthorized: No token found");
+    }
+
     if (!newComment.trim()) return;
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/api/posts/${postId}/comments`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ text: newComment, authorEmail: userEmail }),
       },
     );

@@ -1,3 +1,8 @@
+"use server";
+
+import { headers } from "next/headers";
+import { auth } from "../auth";
+
 const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 
 export const fetchAllClasses = async () => {
@@ -5,16 +10,24 @@ export const fetchAllClasses = async () => {
   return res.json();
 };
 export const fetchAdminAllClasses = async () => {
+  const { token } = await auth.api.getToken({ headers: await headers() });
+  if (!token) throw new Error("Unauthorized: No token found");
   const res = await fetch(`${baseUrl}/api/admin/classes`, {
+    headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });
   return res.json();
 };
 
 export const updateClassStatus = async (id, status) => {
+  const { token } = await auth.api.getToken({ headers: await headers() });
+  if (!token) throw new Error("Unauthorized: No token found");
   const res = await fetch(`${baseUrl}/api/classes/status/${id}`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({ status }),
   });
   return res.json();

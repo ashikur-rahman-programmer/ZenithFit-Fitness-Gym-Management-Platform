@@ -4,10 +4,20 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+export const metadata = {
+  title: "Admin Dashboard",
+  description: "Browse through our expert-led fitness sessions",
+};
+
 async function getStats() {
+  const { token } = await auth.api.getToken({ headers: await headers() });
+
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER_URL}/api/admin-stats`,
     {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
       cache: "no-store",
     },
   );

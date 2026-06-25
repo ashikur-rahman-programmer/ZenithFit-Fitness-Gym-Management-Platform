@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Trash2, MessageSquareText } from "lucide-react";
 import DeleteConfirmModal from "@/components/dashboard/trainer/DeleteConfirmModal";
 import { toast } from "react-toastify";
+import { authClient } from "@/lib/auth-client";
 
 export default function MyPostsClient({ initialPosts }) {
   const [posts, setPosts] = useState(initialPosts);
@@ -12,11 +13,20 @@ export default function MyPostsClient({ initialPosts }) {
   const [selectedPost, setSelectedPost] = useState(null);
 
   const handleDelete = async () => {
+    // jwt authentication
+    const { data: tokenData } = await authClient.token();
+    const token = tokenData?.token;
+    if (!token) {
+      throw new Error("Unauthorized: No token found");
+    }
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/forum/${selectedPost._id}`,
         {
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
       );
 

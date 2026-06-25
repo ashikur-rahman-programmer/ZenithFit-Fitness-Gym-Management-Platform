@@ -2,6 +2,11 @@ import MyPostsClient from "@/components/dashboard/trainer/MyPostsClient";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+export const metadata = {
+  title: "My Posts",
+  description: "Browse through our expert-led fitness sessions",
+};
+
 async function getTrainerPosts(email) {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_SERVER_URL}/api/forum?email=${email}`,
