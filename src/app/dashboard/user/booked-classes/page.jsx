@@ -47,40 +47,51 @@ export default async function BookedClasses() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {bookedClasses.map((item) => (
-                  <tr
-                    key={item._id}
-                    className="group hover:bg-white/[0.03] transition-all duration-300"
-                  >
-                    <td className="px-6 py-5 font-semibold text-white whitespace-nowrap">
-                      {item.className}
-                    </td>
-                    <td className="px-6 py-5 text-white/70 whitespace-nowrap">
-                      <div className="flex items-center gap-2">
-                        <User size={14} className="text-red-500" />
-                        {item.trainerName || "Trainer"}
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 whitespace-nowrap">
-                      <div className="flex items-center gap-2 text-white/70 text-sm">
-                        <Calendar size={14} />
-                        {new Date(item.createdAt).toLocaleDateString()}
-                      </div>
-                    </td>
-                    <td className="px-6 py-5 text-right">
-                      <div className="flex justify-end gap-3">
-                        <Link href={`/all-classes/${item.classId}`}>
-                          {" "}
-                          {/* এখানে item.id নয়, item.classId দিন */}
-                          <button className="p-2.5 rounded-xl bg-white/5 hover:bg-blue-600/20 border border-white/5 transition-all flex items-center gap-2">
-                            <Eye size={16} className="text-white" /> View
-                            Details
-                          </button>
-                        </Link>
-                      </div>
+                {bookedClasses.length > 0 ? (
+                  bookedClasses.map((item) => (
+                    <tr
+                      key={item._id}
+                      className="group hover:bg-white/[0.03] transition-all duration-300"
+                    >
+                      <td className="px-6 py-5 font-semibold text-white whitespace-nowrap">
+                        {item.className}
+                      </td>
+                      <td className="px-6 py-5 text-white/70 whitespace-nowrap">
+                        <div className="flex items-center gap-2">
+                          <User size={14} className="text-red-500" />
+                          {item.trainerName || "Trainer"}
+                        </div>
+                      </td>
+                      <td className="px-6 py-5 whitespace-nowrap">
+                        <div className="flex items-center gap-2 text-white/70 text-sm">
+                          <Calendar size={14} />
+                          {new Date(item.createdAt).toLocaleDateString()}
+                        </div>
+                      </td>
+                      <td className="px-6 py-5 text-right">
+                        <div className="flex justify-end gap-3">
+                          <Link href={`/all-classes/${item.classId}`}>
+                            {" "}
+                            {/* এখানে item.id নয়, item.classId দিন */}
+                            <button className="p-2.5 rounded-xl bg-white/5 hover:bg-blue-600/20 border border-white/5 transition-all flex items-center gap-2">
+                              <Eye size={16} className="text-white" /> View
+                              Details
+                            </button>
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="px-6 py-10 text-center text-white/30"
+                    >
+                      No booked classes found.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>
